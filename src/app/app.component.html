@@ -1,0 +1,23 @@
+<app-ngx-data-table 
+    [rows]="grid.rows"
+    [columns]="grid.columns"
+    [isLoading]="grid.isLoading"
+    [total]="grid.page.total"
+    [limit]="grid.page.limit"
+    [enableRowDetail]="true"
+    [enableCheckbox]="true"
+    (loadPage)="loadPage()"
+    (rowSelect)="rowSelect($event)"
+>
+</app-ngx-data-table>
+<div>
+    <ul>
+<ng-container *ngFor="let item of selectedRow">
+    <li>{{item | json}}</li>
+</ng-container>
+</ul>
+
+</div>
+<ng-template #hyperLinkTemplate let-row="row" let-value="value">
+    <a href="">{{value}}</a>
+</ng-template>

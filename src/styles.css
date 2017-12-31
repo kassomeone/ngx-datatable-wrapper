@@ -1,0 +1,47 @@
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/material.css';
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
+ngx-datatable{
+    height: 410px;
+    width: 660px;
+}
+a {
+    color: #5264AE;
+    text-decoration: none;
+    background-color: transparent;
+    -webkit-text-decoration-skip: objects;
+}
+.ngx-datatable.material .datatable-body .progress-linear{
+    position: fixed !important;
+}
+
+
+.ngx-datatable.material .datatable-body::-webkit-scrollbar , select::-webkit-scrollbar {
+    width: 0.5em;
+}
+ 
+.ngx-datatable.material .datatable-body::-webkit-scrollbar-track , select::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+.ngx-datatable.material .datatable-body::-webkit-scrollbar-thumb , select::-webkit-scrollbar-thumb{
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+.ngx-datatable.material .datatable-body .datatable-row-detail * {
+    word-wrap:break-word;
+}
+
+input[type=text] , select {
+    font-size: 14px;
+    /* display: block; */
+    background: transparent;
+    width: 97%;
+    border: none;
+    border-bottom: 1px solid #5264AE;
+  }
+
+  input:focus ,select:focus{
+      outline: none;
+  }
+  
