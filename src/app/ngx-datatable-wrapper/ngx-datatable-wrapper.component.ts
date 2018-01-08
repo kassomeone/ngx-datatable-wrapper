@@ -24,6 +24,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
   @Input() columns: any[];
   @Input() total: number;
   @Input() limit = 20;
+  @Input() enableFiltering;
   @Input() enableCheckbox;
   @Input() enableRowDetail;
   @ViewChild('detailTemplate') detailTemplate: TemplateRef<any>;
@@ -72,7 +73,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
         // (otherwise, we won't be able to scroll past it)
         limit = Math.max(pageSize, this.limit);
       }
-      this.loadPage.emit();
+      this.loadPage.emit(offsetY);
 
     }
   }
@@ -88,7 +89,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
     // this.filtered = [...this.temp];
 
     this.columns.map((column) => {
-
+      column.sortable = true;
       if (column.filter === 'select') {
         return column.headerTemplate = this.select;
       } else if (column.filter === 'input') {
@@ -189,6 +190,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
 
   toggleExpandRow(row) {
     console.log('Toggled Expand Row!', row);
+    console.log(this.columns);
     this.table.rowDetail.toggleExpandRow(row);
   }
 
@@ -199,7 +201,9 @@ export interface GridOptions {
   rows: any;
   columns: any;
   isLoading: boolean;
+  enableFiltering: boolean;
   page?: PageOptions;
+  width?: number;
 }
 
 export interface PageOptions {
@@ -213,6 +217,7 @@ export const DefaultGridOptionsType1: GridOptions = {
   rows: [],
   columns: [],
   isLoading: false,
+  enableFiltering: true,
   page: {
     total: 1,
     nextPage: 0,

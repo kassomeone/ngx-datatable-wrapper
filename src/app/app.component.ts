@@ -25,14 +25,14 @@ export class AppComponent implements OnInit {
   ngOnInit() {
 
     this.grid.columns = [
-      { name: 'userId', filter: 'none' },
-      { name: 'id', filter: 'select' },
+      { name: 'userId', filter: 'none', width: 25 },
+      { name: 'id', filter: 'select', width: 25 },
       { name: 'title', filter: 'input', cellTemplate: this.hyperLinkTemplate },
       { name: 'body', filter: 'input', cellTemplate: this.hyperLinkTemplate },
     ];
   }
 
-  private loadPage() {
+  private loadPage(offsetY) {
 
     if (this.grid.page.nextPage !== (this.grid.page.total / this.grid.page.limit)) {
       this.grid.isLoading = true;
@@ -42,12 +42,22 @@ export class AppComponent implements OnInit {
           this.grid.isLoading = false;
           this.grid.page.total = Number(results.headers.get('x-total-count'));
           this.grid.rows = [...this.grid.rows, ...results.json()];
+          setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = 1; }, 1);
+          setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = offsetY; }, 1);
+    
         });
     }
+
+
   }
 
   private rowSelect(selection) {
     this.selectedRow = [...selection];
+  }
+
+
+  alertMe() {
+    alert();
   }
 
 }

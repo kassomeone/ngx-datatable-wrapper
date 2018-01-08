@@ -2,11 +2,12 @@
     [rows]="grid.rows"
     [columns]="grid.columns"
     [isLoading]="grid.isLoading"
+    [enableFiltering]="grid.enableFiltering"
     [total]="grid.page.total"
     [limit]="grid.page.limit"
     [enableRowDetail]="true"
     [enableCheckbox]="true"
-    (loadPage)="loadPage()"
+    (loadPage)="loadPage($event)"
     (rowSelect)="rowSelect($event)"
 >
 </app-ngx-data-table>

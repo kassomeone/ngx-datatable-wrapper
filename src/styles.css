@@ -1,6 +1,8 @@
 @import '~@swimlane/ngx-datatable/release/index.css';
 @import '~@swimlane/ngx-datatable/release/themes/material.css';
 @import '~@swimlane/ngx-datatable/release/assets/icons.css';
+
+
 ngx-datatable{
     height: 410px;
     width: 660px;
@@ -28,8 +30,9 @@ a {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
+
 .ngx-datatable.material .datatable-body .datatable-row-detail * {
-    word-wrap:break-word;
+    word-break: break-all;
 }
 
 input[type=text] , select {
