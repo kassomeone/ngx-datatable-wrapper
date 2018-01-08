@@ -20,5 +20,5 @@
 
 </div>
 <ng-template #hyperLinkTemplate let-row="row" let-value="value">
-    <a href="">{{value}}</a>
+    <a title="{{value}}" href="javascript:void(0)"  (click)="fetchData(row)">{{value}}</a>
 </ng-template>

@@ -38,7 +38,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
   filterEventList = [];
   count = 0;
   readonly headerHeight = 50;
-  readonly rowHeight = 50;
+  readonly rowHeight = 40;
   previousHeight = 0;
 
   constructor(private el: ElementRef) {
@@ -204,6 +204,7 @@ export interface GridOptions {
   enableFiltering: boolean;
   page?: PageOptions;
   width?: number;
+  ngxRowsUpdated?(scrollPosition: number);
 }
 
 export interface PageOptions {
@@ -222,8 +223,11 @@ export const DefaultGridOptionsType1: GridOptions = {
     total: 1,
     nextPage: 0,
     limit: 40
+  },
+  ngxRowsUpdated(scrollPosition) {
+    setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = 1; }, 1);
+    setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = scrollPosition; }, 1);
   }
-
 };
 
 

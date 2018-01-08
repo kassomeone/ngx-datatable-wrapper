@@ -30,25 +30,29 @@ export class AppComponent implements OnInit {
       { name: 'title', filter: 'input', cellTemplate: this.hyperLinkTemplate },
       { name: 'body', filter: 'input', cellTemplate: this.hyperLinkTemplate },
     ];
+    this.grid.page.limit = 20;
   }
 
-  private loadPage(offsetY) {
+  private loadPage(event) {
 
     if (this.grid.page.nextPage !== (this.grid.page.total / this.grid.page.limit)) {
       this.grid.isLoading = true;
       this.grid.page.nextPage = (this.grid.rows.length + this.grid.page.limit) / this.grid.page.limit;
       this.http.get('http://jsonplaceholder.typicode.com/posts?&_limit=' + this.grid.page.limit + '&_page=' + this.grid.page.nextPage)
         .subscribe((results) => {
+
           this.grid.isLoading = false;
           this.grid.page.total = Number(results.headers.get('x-total-count'));
           this.grid.rows = [...this.grid.rows, ...results.json()];
-          setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = 1; }, 1);
-          setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = offsetY; }, 1);
-    
+          this.grid.ngxRowsUpdated(event);
+
         });
     }
+  }
 
-
+  fetchData(row) {
+    console.log(row);
+    return false;
   }
 
   private rowSelect(selection) {

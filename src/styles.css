@@ -5,7 +5,8 @@
 
 ngx-datatable{
     height: 410px;
-    width: 660px;
+    width: 800px;
+    margin:0 auto;
 }
 a {
     color: #5264AE;

@@ -4,7 +4,7 @@
     [rows]="rows" 
     [columns]="columns" 
     [headerHeight]="isFilterEnabled ? 60 : 35" 
-    [rowHeight]="40"
+    [rowHeight]="rowHeight"
     [columnMode]="'force'" 
     [loadingIndicator]="isLoading" 
     [externalPaging]="true" (scroll)="onScroll($event.offsetY)" (select)='onSelect($event)'
