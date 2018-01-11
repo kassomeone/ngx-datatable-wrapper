@@ -27,6 +27,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
   @Input() enableFiltering;
   @Input() enableCheckbox;
   @Input() enableRowDetail;
+  @Input() lazyLoad;
   @ViewChild('detailTemplate') detailTemplate: TemplateRef<any>;
   @ViewChild('checkboxCellTemplate') checkboxCellTemplate: TemplateRef<any>;
   @Output() loadPage = new EventEmitter();
@@ -54,28 +55,31 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
   }
   onScroll(offsetY: number) {
 
-    // total height of all rows in the viewport
-    const viewHeight = this.el.nativeElement.getBoundingClientRect().height - this.headerHeight;
-    // console.log(viewHeight);
-    // check if we scrolled to the end of the viewport
-    if (!this.isLoading && (offsetY + viewHeight) + 250 >= this.rows.length * this.rowHeight) {
+    if (!this.lazyLoad) {
+      // total height of all rows in the viewport
+      const viewHeight = this.el.nativeElement.getBoundingClientRect().height - this.headerHeight;
+      // console.log(viewHeight);
+      // check if we scrolled to the end of the viewport
+      if (!this.isLoading && (offsetY + viewHeight) + 250 >= this.rows.length * this.rowHeight) {
 
-      // total number of results to load
-      let limit = this.limit;
+        // total number of results to load
+        let limit = this.limit;
 
-      // check if we haven't fetched any results yet
-      if (this.rows.length === 0) {
+        // check if we haven't fetched any results yet
+        if (this.rows.length === 0) {
 
-        // calculate the number of rows that fit within viewport
-        const pageSize = Math.ceil(viewHeight / this.rowHeight);
+          // calculate the number of rows that fit within viewport
+          const pageSize = Math.ceil(viewHeight / this.rowHeight);
 
-        // change the limit to pageSize such that we fill the first page entirely
-        // (otherwise, we won't be able to scroll past it)
-        limit = Math.max(pageSize, this.limit);
+          // change the limit to pageSize such that we fill the first page entirely
+          // (otherwise, we won't be able to scroll past it)
+          limit = Math.max(pageSize, this.limit);
+        }
+        this.loadPage.emit(offsetY);
+
       }
-      this.loadPage.emit(offsetY);
-
     }
+    this.lazyLoad = false;
   }
 
   ngOnInit() {
@@ -201,6 +205,7 @@ export interface GridOptions {
   rows: any;
   columns: any;
   isLoading: boolean;
+  lazyLoad: boolean;
   enableFiltering: boolean;
   page?: PageOptions;
   width?: number;
@@ -219,6 +224,7 @@ export const DefaultGridOptionsType1: GridOptions = {
   columns: [],
   isLoading: false,
   enableFiltering: true,
+  lazyLoad: false,
   page: {
     total: 1,
     nextPage: 0,

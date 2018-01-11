@@ -1,3 +1,5 @@
+<button (click)="lazyLoad()">Load</button>
+
 <app-ngx-data-table 
     [rows]="grid.rows"
     [columns]="grid.columns"
@@ -9,8 +11,11 @@
     [enableCheckbox]="true"
     (loadPage)="loadPage($event)"
     (rowSelect)="rowSelect($event)"
+    [lazyLoad]="grid.lazyLoad"
 >
 </app-ngx-data-table>
+
+
 <div>
     <ul>
 <ng-container *ngFor="let item of selectedRow">

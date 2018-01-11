@@ -36,16 +36,16 @@ a {
     word-break: break-all;
 }
 
-input[type=text] , select {
+ngx-datatable input[type=text] , select {
     font-size: 14px;
     /* display: block; */
     background: transparent;
-    width: 97%;
+    width: 80%;
     border: none;
     border-bottom: 1px solid #5264AE;
   }
 
-  input:focus ,select:focus{
+  ngx-datatable input:focus ,select:focus{
       outline: none;
   }
   

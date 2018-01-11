@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   selectedRow = [];
 
   ngOnInit() {
-
+    this.grid.lazyLoad = true;
     this.grid.columns = [
       { name: 'userId', filter: 'none', width: 25 },
       { name: 'id', filter: 'select', width: 25 },
@@ -50,8 +50,12 @@ export class AppComponent implements OnInit {
     }
   }
 
+  private lazyLoad() {
+    this.loadPage(0);
+  }
+
   fetchData(row) {
-    console.log(row);
+    alert(JSON.stringify(row));
     return false;
   }
 
