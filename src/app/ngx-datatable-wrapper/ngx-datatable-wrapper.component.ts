@@ -79,8 +79,9 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
           // (otherwise, we won't be able to scroll past it)
           limit = Math.max(pageSize, this.limit);
         }
-
-        this.loadPage.emit(this.query);
+        if (this.rows.length < this.total) {
+          this.loadPage.emit(this.query);
+        }
 
       }
     }
@@ -126,10 +127,6 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
         cellTemplate: this.detailTemplate
       });
     }
-
-
-
-    console.log(this.columns);
     this.onScroll(0);
   }
 
@@ -137,7 +134,6 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
     // if (this.rows.length < this.temp.length) {
     this.rows = [...this.temp];
     this.filtered = [...this.temp];
-    console.log(this.rows.length);
   }
 
   clearFilter(event, column) {

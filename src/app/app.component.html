@@ -5,12 +5,7 @@
 
 <ngx-data-table-wrapper [rows]="grid.rows" [columns]="grid.columns" [isLoading]="grid.isLoading" [enableFiltering]="grid.enableFiltering"
 [total]="grid.page.total" [limit]="grid.page.limit" [enableRowDetail]="true" [enableCheckbox]="true" (loadPage)="loadPage($event)"
-(rowSelect)="rowSelect($event)" [lazyLoad]="grid.lazyLoad" [query]="grid.query"></ngx-data-table-wrapper>
-
-<ngx-data-table-wrapper [rows]="grid1.rows" [columns]="grid1.columns" [isLoading]="grid1.isLoading" [enableFiltering]="grid1.enableFiltering"
-[total]="grid1.page.total" [limit]="grid1.page.limit" [enableRowDetail]="true" [enableCheckbox]="true" (loadPage)="loadPage($event)"
-(rowSelect)="rowSelect($event)" [lazyLoad]="grid1.lazyLoad" [query]="grid1.query"></ngx-data-table-wrapper>
-
+(rowSelect)="rowSelect($event)" [lazyLoad]="grid.lazyLoad" [query]="'grid.query'"></ngx-data-table-wrapper>
 
 <div>
     <ul>
