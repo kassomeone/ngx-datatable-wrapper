@@ -20,10 +20,16 @@ export class AppComponent implements OnInit {
   constructor(private http: Http) { }
 
   grid: GridOptions = DefaultGridOptionsType1;
+  grid1: GridOptions = JSON.parse(JSON.stringify(DefaultGridOptionsType1));
   selectedRow = [];
+  requestObject: RequestObject;
 
   ngOnInit() {
-    this.grid.lazyLoad = true;
+
+    this.grid.lazyLoad = false;
+    this.grid.query = {
+      id: ''
+    };
     this.grid.columns = [
       { name: 'userId', filter: 'none', width: 25 },
       { name: 'id', filter: 'select', width: 25 },
@@ -31,27 +37,36 @@ export class AppComponent implements OnInit {
       { name: 'body', filter: 'input', cellTemplate: this.hyperLinkTemplate },
     ];
     this.grid.page.limit = 20;
+
   }
 
-  private loadPage(event) {
+  private loadPage(query) {
 
     if (this.grid.page.nextPage !== (this.grid.page.total / this.grid.page.limit)) {
       this.grid.isLoading = true;
       this.grid.page.nextPage = (this.grid.rows.length + this.grid.page.limit) / this.grid.page.limit;
-      this.http.get('http://jsonplaceholder.typicode.com/posts?&_limit=' + this.grid.page.limit + '&_page=' + this.grid.page.nextPage)
+
+      this.http.get('http://jsonplaceholder.typicode.com/posts?&_limit='
+        + this.grid.page.limit + '&_page=' + this.grid.page.nextPage
+        // + '&id=' + query.id
+      )
         .subscribe((results) => {
 
           this.grid.isLoading = false;
-          this.grid.page.total = Number(results.headers.get('x-total-count'));
           this.grid.rows = [...this.grid.rows, ...results.json()];
-          this.grid.ngxRowsUpdated(event);
+          this.grid.page.total = Number(results.headers.get('x-total-count'));
+          this.grid.ngxRowsUpdated();
 
         });
     }
   }
 
+
   private lazyLoad() {
-    this.loadPage(0);
+
+    this.grid.rows = [];
+    this.loadPage(this.grid.query);
+
   }
 
   fetchData(row) {
@@ -63,9 +78,9 @@ export class AppComponent implements OnInit {
     this.selectedRow = [...selection];
   }
 
+}
 
-  alertMe() {
-    alert();
-  }
 
+export class RequestObject {
+  request: any;
 }

@@ -8,17 +8,16 @@ import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
-  selector: 'app-ngx-data-table',
+  selector: 'ngx-data-table-wrapper',
   templateUrl: './ngx-datatable-wrapper.component.html',
   styleUrls: ['./ngx-datatable-wrapper.component.css'],
 })
 export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
-  isFilterEnabled = true;
 
+  isFilterEnabled = true;
   @ViewChild('select') select: TemplateRef<any>;
   @ViewChild('input') input: TemplateRef<any>;
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  cellTemplate: any;
   @Input('rows') temp: any[];
   @Input() isLoading: boolean;
   @Input() columns: any[];
@@ -28,11 +27,15 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
   @Input() enableCheckbox;
   @Input() enableRowDetail;
   @Input() lazyLoad;
+  @Input() query;
   @ViewChild('detailTemplate') detailTemplate: TemplateRef<any>;
   @ViewChild('checkboxCellTemplate') checkboxCellTemplate: TemplateRef<any>;
   @Output() loadPage = new EventEmitter();
   @Output() rowSelect = new EventEmitter();
+
+  cellTemplate: any;
   rows = [];
+  scrollPosition: number;
   // temp = [];
   filtered = [];
   lastFiltered = [];
@@ -53,8 +56,9 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
   toggleFilter() {
     this.isFilterEnabled = !this.isFilterEnabled;
   }
-  onScroll(offsetY: number) {
 
+  onScroll(offsetY: number) {
+    this.scrollPosition = offsetY;
     if (!this.lazyLoad) {
       // total height of all rows in the viewport
       const viewHeight = this.el.nativeElement.getBoundingClientRect().height - this.headerHeight;
@@ -75,7 +79,8 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
           // (otherwise, we won't be able to scroll past it)
           limit = Math.max(pageSize, this.limit);
         }
-        this.loadPage.emit(offsetY);
+
+        this.loadPage.emit(this.query);
 
       }
     }
@@ -132,12 +137,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
     // if (this.rows.length < this.temp.length) {
     this.rows = [...this.temp];
     this.filtered = [...this.temp];
-    // this.el.nativeElement.getElementsByTagName('datatable-body')[0].style.height = '149px';
-    // setTimeout(() => {
-    //   this.el.nativeElement.getElementsByTagName('datatable-body')[0].style.height = '150px';
-    // }, 500);
     console.log(this.rows.length);
-    // }
   }
 
   clearFilter(event, column) {
@@ -187,6 +187,7 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
         return d[column.name].toLowerCase().startsWith(val) || !val;
       }
     });
+
     this.el.nativeElement.getElementsByTagName('datatable-body')[0].scrollTop = '0';
     this.rows = this.filtered;
     this.table.offset = 0;
@@ -206,10 +207,11 @@ export interface GridOptions {
   columns: any;
   isLoading: boolean;
   lazyLoad: boolean;
+  query: any;
   enableFiltering: boolean;
   page?: PageOptions;
   width?: number;
-  ngxRowsUpdated?(scrollPosition: number);
+  ngxRowsUpdated?();
 }
 
 export interface PageOptions {
@@ -224,15 +226,23 @@ export const DefaultGridOptionsType1: GridOptions = {
   columns: [],
   isLoading: false,
   enableFiltering: true,
+  query: '',
   lazyLoad: false,
   page: {
     total: 1,
     nextPage: 0,
     limit: 40
   },
-  ngxRowsUpdated(scrollPosition) {
-    setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = 1; }, 1);
-    setTimeout(function () { document.getElementsByTagName('datatable-body')[0].scrollTop = scrollPosition; }, 1);
+  ngxRowsUpdated() {
+
+    const nodeList = document.getElementsByTagName('datatable-body');
+    for (const key in nodeList) {
+      if (nodeList.hasOwnProperty(key)) {
+        const originalScrollPosition = nodeList[key].scrollTop;
+        setTimeout(() => nodeList[key].scrollTop = originalScrollPosition - 1);
+        setTimeout(() => nodeList[key].scrollTop = originalScrollPosition);
+      }
+    }
   }
 };
 
