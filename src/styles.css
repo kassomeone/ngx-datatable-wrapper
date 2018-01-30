@@ -1,5 +1,6 @@
 @import '~@swimlane/ngx-datatable/release/index.css';
 @import '~@swimlane/ngx-datatable/release/themes/material.css';
+@import '~@swimlane/ngx-datatable/release/themes/bootstrap.css';
 @import '~@swimlane/ngx-datatable/release/assets/icons.css';
 
 
@@ -42,10 +43,29 @@ ngx-datatable input[type=text] , select {
     background: transparent;
     width: 80%;
     border: none;
+    line-height: 0px;
     border-bottom: 1px solid #5264AE;
   }
 
   ngx-datatable input:focus ,select:focus{
       outline: none;
   }
-  
+
+
+  datatable-body-cell {
+    border-left:    solid 1px #eee;
+    border-bottom: solid 1px #eee;
+  }
+
+  .row-detail-button {
+    border-left:    none;
+    border-bottom: none;
+    padding-left:5px !important;
+    background:#eee;
+  }
+
+  .row-checkbox {
+    border-left:    none;
+    border-bottom: none;
+    padding-left:8px !important;
+  }

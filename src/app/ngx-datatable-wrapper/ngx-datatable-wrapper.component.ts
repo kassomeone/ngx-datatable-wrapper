@@ -51,6 +51,15 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
   onSelect({ selected }) {
     console.log('select event', selected);
     this.rowSelect.emit(selected);
+    const nodeList = document.getElementsByTagName('datatable-body');
+    for (const key in nodeList) {
+      if (nodeList.hasOwnProperty(key)) {
+        const originalScrollPosition = nodeList[key].scrollTop;
+        const positionToMove = originalScrollPosition > 0 ? originalScrollPosition - 1 : originalScrollPosition + 1;
+        setTimeout(() => nodeList[key].scrollTop = positionToMove);
+        setTimeout(() => nodeList[key].scrollTop = originalScrollPosition);
+      }
+    }
   }
 
   toggleFilter() {
@@ -101,22 +110,24 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
     this.columns.map((column) => {
       column.sortable = true;
       if (column.filter === 'select') {
+        column.filterValue = '';
         return column.headerTemplate = this.select;
       } else if (column.filter === 'input') {
+        column.filterValue = '';
         return column.headerTemplate = this.input;
       } else {
         return column;
       }
-
     });
 
     if (this.enableCheckbox) {
-
       this.columns.unshift({
         width: 20,
         minWidth: 20,
-        cellTemplate: this.checkboxCellTemplate
+        cellTemplate: this.checkboxCellTemplate,
+        cellClass: 'row-checkbox'
       });
+      this.columns[0].flexGrow = 1;
     }
 
     if (this.enableRowDetail) {
@@ -124,8 +135,10 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
         width: 20,
         minWidth: 20,
         resizeable: true,
-        cellTemplate: this.detailTemplate
+        cellTemplate: this.detailTemplate,
+        cellClass: 'row-detail-button'
       });
+      this.columns[0].flexGrow = 1;
     }
     this.onScroll(0);
   }
@@ -136,56 +149,36 @@ export class NgxDataTableWrapperComponent implements OnInit, OnChanges {
     this.filtered = [...this.temp];
   }
 
-  clearFilter(event, column) {
-
-    this.filtered = [...this.temp];
-    this.rows = [...this.filtered];
-
-    this.columns.map((_column) => {
-      if (_column.target && _column.name !== column.name && _column.target.value.length > 0) {
-        this.updateFilter(null, _column);
-      }
-      if (_column.target && _column.name === column.name) {
-        _column.target.value = '';
-      }
-    });
-
+  clearFilter(event, col) {
+    if (this.temp.length > this.rows.length) {
+      col.filterValue = '';
+      this.updateFilter(null);
+    }
   }
 
-  updateFilter(event, column) {
 
-    let val;
-    if (event) {
+  updateFilter(event) {
 
-      val = event.target.value.toLowerCase();
+    let filtered = [...this.temp];
 
-      this.columns.map((value) => {
-        if (value.name === column.name) {
-          value.target = event.target;
-        }
-      });
+    this.columns.forEach((column) => {
 
-    } else {
-      val = column.target.value.toLowerCase();
-    }
+      if (column.filterValue) {
 
+        filtered = filtered.filter((d) => {
 
-    if (val.length === 0) {
-      this.clearFilter(event, column);
-      return true;
-    }
+          if (typeof d[column.prop] === 'number') {
+            return d[column.prop].toString() === (column.filterValue) || !column.filterValue;
+          } else {
+            return d[column.prop].toLowerCase().startsWith(column.filterValue.toLowerCase()) || !column.filterValue;
+          }
 
-    this.filtered = this.filtered.filter(function (d) {
-
-      if (typeof d[column.name] === 'number') {
-        return d[column.name].toString() === (val) || !val;
-      } else {
-        return d[column.name].toLowerCase().startsWith(val) || !val;
+        });
       }
     });
 
     this.el.nativeElement.getElementsByTagName('datatable-body')[0].scrollTop = '0';
-    this.rows = this.filtered;
+    this.rows = [...filtered];
     this.table.offset = 0;
   }
 
@@ -202,6 +195,7 @@ export interface GridOptions {
   rows: any;
   columns: any;
   isLoading: boolean;
+  enableServerSideFiltering: boolean;
   lazyLoad: boolean;
   query: any;
   enableFiltering: boolean;
@@ -222,6 +216,7 @@ export const DefaultGridOptionsType1: GridOptions = {
   columns: [],
   isLoading: false,
   enableFiltering: true,
+  enableServerSideFiltering: false,
   query: '',
   lazyLoad: false,
   page: {

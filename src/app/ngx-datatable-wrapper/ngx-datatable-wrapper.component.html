@@ -3,19 +3,22 @@
     <ngx-datatable class="material" 
     [rows]="rows" 
     [columns]="columns" 
-    [headerHeight]="isFilterEnabled ? 60 : 35" 
+    [headerHeight]="isFilterEnabled ? 55 : 34" 
     [rowHeight]="rowHeight"
-    [columnMode]="'force'" 
+    [columnMode]="'flex'" 
     [loadingIndicator]="isLoading" 
     [externalPaging]="true" (scroll)="onScroll($event.offsetY)" (select)='onSelect($event)'
         [count]="total" [scrollbarV]="true" [selectionType]="'checkbox'" #table>
-        <ngx-datatable-row-detail [rowHeight]="200" #myDetailRow>
+        <ngx-datatable-row-detail [rowHeight]="200"  #myDetailRow>
             <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-                <div style="padding-left:35px;">
-                    <ul>
-                        <ng-container *ngFor="let column of columns">
+                <div style="padding-left:20px;">
+                    <ul style="list-style:none">
+                        <ng-container *ngFor="let column of columns" >
                             <li *ngIf="column.name">
-                                {{column.name}} : {{row[column.prop]}}
+                                <div class="row">
+                                    <div class="col-sm-1"><b>{{column.name}}</b> : </div>
+                                    <div class="col-sm-11">{{row[column.prop]}}</div>
+                                </div>
                             </li>
                         </ng-container>
                     </ul>
@@ -32,26 +35,24 @@
 
     <ng-template #select let-column="column" let-sort="sortFn" let-sortDir="sortDir">
         <div>
-            <span class="column-header" (click)="sort()">{{column.name}}
-            </span>
+            <span class="column-header" (click)="sort()">{{column.name}}</span>
             <span class="sort-btn" [class.sort-asc]="sortDir === 'asc'" [class.datatable-icon-up]="sortDir === 'asc'" [class.sort-desc]="sortDir === 'desc'"
                 [class.datatable-icon-down]="sortDir === 'desc'"></span>
         </div>
-        <select (change)='updateFilter($event,column)'>
+        <select (change)='updateFilter($event)' [(ngModel)]="column.filterValue">
             <option value=""> -- </option>
-            <option *ngFor="let item of rows  | unique : column.name" value="{{item[column.name]}}">{{item[column.name]}}</option>
+            <option *ngFor="let item of rows  | unique : column.prop">{{item[column.prop]}}</option>
         </select>
-        <i [hidden]="filtered.length === temp.length " class="datatable-icon-close" style="cursor:pointer" (click)="clearFilter($event,column)"></i>
+        <i [hidden]="!column.filterValue" class="datatable-icon-close" style="cursor:pointer" (click)="clearFilter($event,column)"></i>
     </ng-template>
     <ng-template #input let-column="column" let-sort="sortFn" let-sortDir="sortDir">
         <div>
-            <span class="column-header" (click)="sort()">{{column.name}}
-            </span>
+            <span class="column-header" (click)="sort()">{{column.name}}</span>
             <span class="sort-btn" [class.sort-asc]="sortDir === 'asc'" [class.datatable-icon-up]="sortDir === 'asc'" [class.sort-desc]="sortDir === 'desc'"
                 [class.datatable-icon-down]="sortDir === 'desc'"></span>
         </div>
-        <input type="text" autofocus (keyup)='updateFilter($event,column)'>
-        <i [hidden]="filtered.length === temp.length " class="datatable-icon-close" style="cursor:pointer" (click)="clearFilter($event,column)"></i>
+        <input type="text" (keyup)='updateFilter($event)' [(ngModel)]="column.filterValue">
+        <i [hidden]="!column.filterValue" class="datatable-icon-close" style="cursor:pointer" (click)="clearFilter($event,column)"></i>
     </ng-template>
 
     <ng-template #checkboxCellTemplate ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">

@@ -6,6 +6,8 @@ import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { count } from 'rxjs/operator/count';
 import { GridOptions, DefaultGridOptionsType1 } from './ngx-datatable-wrapper/ngx-datatable-wrapper.component';
+import { LoadingBarService } from '@ngx-loading-bar/core';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -17,26 +19,38 @@ import { GridOptions, DefaultGridOptionsType1 } from './ngx-datatable-wrapper/ng
 export class AppComponent implements OnInit {
 
   @ViewChild('hyperLinkTemplate') hyperLinkTemplate: TemplateRef<any>;
-  constructor(private http: Http) { }
+  @ViewChild('voteTemplate') voteTemplate: TemplateRef<any>;
+  constructor(private http: HttpClient) { }
 
   grid: GridOptions = DefaultGridOptionsType1;
   grid1: GridOptions = JSON.parse(JSON.stringify(DefaultGridOptionsType1));
   selectedRow = [];
   requestObject: RequestObject;
-
+  showLoader = false;
+  load = 0;
   ngOnInit() {
 
     this.grid.lazyLoad = false;
+
     this.grid.query = {
       id: ''
     };
     this.grid.columns = [
-      { name: 'userId', filter: 'none', width: 25 },
-      { name: 'id', filter: 'select', width: 25 },
-      { name: 'title', filter: 'input', cellTemplate: this.hyperLinkTemplate },
-      { name: 'body', filter: 'input', cellTemplate: this.hyperLinkTemplate },
+      { name: 'User Id', prop: 'userId', filter: 'none', width: 25, flexGrow: 5 },
+      { name: 'ID', prop: 'id', filter: 'select', width: 25, cellTemplate: this.voteTemplate, flexGrow: 8 },
+      { name: 'Title', prop: 'title', filter: 'select', cellTemplate: this.hyperLinkTemplate, flexGrow: 8 },
+      { name: 'Body', prop: 'body', filter: 'input', cellTemplate: this.hyperLinkTemplate, flexGrow: 8 },
     ];
     this.grid.page.limit = 10;
+    this.grid.page.total = 10;
+    // this.grid.rows = [...[
+    //   { userId: 'sadasd', id: 1, id2: 'second', title: 'REPAIR_STATUS', body: 'thanks' },
+    //   { userId: 'sadasd', id: 1, id2: 'second', title: 'kashif1', body: 'thanks1' },
+    //   { userId: 'sadasd', id: 3, id2: 'second', title: 'siddique', body: 'thanks2' },
+    //   { userId: 'sadasd', id: 4, id2: 'second', title: 'kashif2', body: 'thanks1' },
+    //   { userId: 'sadasd', id: 5, id2: 'second', title: 'kashif3', body: 'thanks2' }
+
+    // ]];
 
   }
 
@@ -47,18 +61,17 @@ export class AppComponent implements OnInit {
       this.grid.isLoading = true;
       this.grid.page.nextPage = (this.grid.rows.length + this.grid.page.limit) / this.grid.page.limit;
 
-      this.http.get('http://jsonplaceholder.typicode.com/posts?&_limit='
+      this.http.get<any>('http://jsonplaceholder.typicode.com/posts?&_limit='
         + this.grid.page.limit + '&_page=' + this.grid.page.nextPage
         // + '&userId=' + query.id
-      )
-        .subscribe((results) => {
+      ).subscribe((results) => {
 
-          this.grid.isLoading = false;
-          this.grid.rows = [...this.grid.rows, ...results.json()];
-          this.grid.page.total = Number(results.headers.get('x-total-count'));
-          this.grid.ngxRowsUpdated();
+        this.grid.isLoading = false;
+        this.grid.rows = [...this.grid.rows, ...results];
+        this.grid.page.total = 100;
+        this.grid.ngxRowsUpdated();
 
-        });
+      });
     }
   }
 

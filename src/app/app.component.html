@@ -1,20 +1,25 @@
 <input type="text" [(ngModel)]="grid.query.id">
-
-<button (click)="lazyLoad()">Load</button>
-
+<button (click)="loadPage()">ssss</button>
 
 <ngx-data-table-wrapper [rows]="grid.rows" [columns]="grid.columns" [isLoading]="grid.isLoading" [enableFiltering]="grid.enableFiltering"
-[total]="grid.page.total" [limit]="grid.page.limit" [enableRowDetail]="true" [enableCheckbox]="true" (loadPage)="loadPage($event)"
-(rowSelect)="rowSelect($event)" [lazyLoad]="grid.lazyLoad" [query]="'grid.query'"></ngx-data-table-wrapper>
+    [total]="grid.page.total" [limit]="grid.page.limit" [enableRowDetail]="true" [enableCheckbox]="true" (loadPage)="loadPage($event)"
+    (rowSelect)="rowSelect($event)" [lazyLoad]="grid.lazyLoad" [query]="'grid.query'"></ngx-data-table-wrapper>
+
+<ng-template #hyperLinkTemplate let-row="row" let-value="value">
+    <a title="{{value}}" href="javascript:void(0)" (click)="fetchData(row)">{{value}}</a>
+</ng-template>
+
+<ng-template #voteTemplate let-row="row" let-value="value">
+    <a title="{{value}}" href="javascript:void(0)" (click)="fetchData(row)">{{row.id}}</a> -- 
+    <a title="{{value}}" href="javascript:void(0)" (click)="fetchData(row)">{{row.id2}}</a>
+</ng-template>
+
 
 <div>
+    <button [disabled]="selectedRow.length == 0">button</button>
     <ul>
         <ng-container *ngFor="let item of selectedRow">
             <li>{{item | json}}</li>
         </ng-container>
     </ul>
 </div>
-
-<ng-template #hyperLinkTemplate let-row="row" let-value="value">
-    <a title="{{value}}" href="javascript:void(0)" (click)="fetchData(row)">{{value}}</a>
-</ng-template>
